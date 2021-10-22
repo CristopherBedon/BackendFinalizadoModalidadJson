@@ -6,15 +6,19 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.empresa.entity.Docente;
+import com.empresa.entity.Filtro;
 import com.empresa.service.DocenteService;
 import com.empresa.util.Constantes;
 
@@ -50,5 +54,97 @@ public class DocenteController {
 		}
 		return ResponseEntity.ok(salida);
 	}
+	
+	@GetMapping("/porNombre/{paramNombre}")
+	@ResponseBody
+	public ResponseEntity<List<Docente>> listaPorNombre(@PathVariable("paramNombre") String filtro) {
+		List<Docente> lista = docenteService.listaDocentePorNombreLike(filtro + "%");
+		return ResponseEntity.ok(lista);
+	}
+	
+	@GetMapping("/porDni/{paramDni}")
+	@ResponseBody
+	public ResponseEntity<List<Docente>> listaPorDni(@PathVariable("paramDni") String filtro) {
+		List<Docente> lista = docenteService.listaDocentePorDni(filtro);
+		return ResponseEntity.ok(lista);
+	}
+	
+	//Primera Forma
+	@GetMapping("/porNombreDni/{paramNombre}/{paramDni}")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> listaPorNombreDni(@PathVariable("paramNombre") String nombre,
+														   @PathVariable("paramDni") String dni) {
+		Map<String, Object> salida = new HashMap<>();
+		try {
+			List<Docente> lista = docenteService.listaDocentePorNombreDni(nombre + "%", dni);
+			if(CollectionUtils.isEmpty(lista)) {
+				salida.put("mensaje", "No existe Datos");
+			}else {
+				salida.put("lista", lista);
+			}
+		} catch (Exception e) {
+				e.printStackTrace();
+				salida.put("mensaje", "Error en la consulta " + e.getMessage());
+		}
+		return ResponseEntity.ok(salida);
+	}
+	
+	//Segunda Forma
+	@GetMapping(path = "/porNombreDniPorParametros" , params = {"nombre","dni"})
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> listaPorNombreDniParametros(
+																	@RequestParam(value = "nombre") String nombre,
+																	@RequestParam(value = "dni") String dni) {
+		Map<String, Object> salida = new HashMap<>();
+		try {
+			List<Docente> lista = docenteService.listaDocentePorNombreDni(nombre + "%", dni);
+			if(CollectionUtils.isEmpty(lista)) {
+				salida.put("mensaje", "No existe Datos");
+			}else {
+				salida.put("lista", lista);
+			}
+		} catch (Exception e) {
+				e.printStackTrace();
+				salida.put("mensaje", "Error en la consulta " + e.getMessage());
+		}
+		return ResponseEntity.ok(salida);
+	}
+	
+	//Tercera Forma
+	@GetMapping(path = "/porNombreDniPorJson")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> listaPorNombreDniJSON(@RequestBody Filtro obj) {
+		
+		Map<String, Object> salida = new HashMap<>();
+		try {
+			List<Docente> lista = docenteService.listaDocentePorNombreDni(obj.getNombre() + "%", obj.getDni());
+			if(CollectionUtils.isEmpty(lista)) {
+				salida.put("mensaje", "No existe Datos");
+			}else {
+				salida.put("lista", lista);
+			}
+		} catch (Exception e) {
+				e.printStackTrace();
+				salida.put("mensaje", "Error en la consulta " + e.getMessage());
+		}
+		return ResponseEntity.ok(salida);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

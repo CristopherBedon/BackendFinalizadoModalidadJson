@@ -24,4 +24,19 @@ public class ModalidadServiceImpl implements ModalidadService {
 		return repositorio.findAll();
 	}
 
+	@Override
+	public List<Modalidad> listaModalidadNombreLike(String nombre) {
+		return repositorio.findByNombreLike(nombre);
+	}
+
+	@Override
+	public List<Modalidad> listaModalidadSedeLike(String sede) {
+		return repositorio.findBySedeLike(sede);
+	}
+
+	@Override
+	public List<Modalidad> listaModalidadNombreSede(String nombre, String sede) {
+		return repositorio.listaPorNombreSede(nombre, sede);
+	}
+
 }

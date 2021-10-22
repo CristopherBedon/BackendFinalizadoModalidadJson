@@ -8,6 +8,7 @@ public class DawiiSesion05BackendFinalizadoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DawiiSesion05BackendFinalizadoApplication.class, args);
+		System.out.println("Se terminó semana 007");
 	}
 
 }
